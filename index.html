@@ -7,6 +7,7 @@
 
   <!-- MathJax -->
   <script>
+    window.mathJaxReady = false;
     MathJax = {
       tex: {
         inlineMath: [['\\(', '\\)'], ['$', '$']],
@@ -16,9 +17,7 @@
       startup: {
         ready() {
           MathJax.startup.defaultReady();
-          MathJax.startup.promise.then(() => {
-            window.mathJaxReady = true;
-          });
+          MathJax.startup.promise.then(() => { window.mathJaxReady = true; });
         }
       }
     };
@@ -80,7 +79,6 @@
     .card-title { font-size: 1.4em; color: #0d47a1; margin: 15px 0; font-weight: 700; }
     .card-content { font-size: 1.05em; color: #2c3e50; line-height: 1.95; }
 
-    /* “Πλήρης σύνταξη” = παράγραφοι */
     .exam-paragraph { margin: 14px 0; line-height: 1.95; }
 
     .empty-state { text-align: center; padding: 80px 20px; color: #999; }
@@ -219,461 +217,417 @@
 </div>
 
 <script>
-  const DATA_URLS = {
-    "2025": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2025.json",
-    "2024": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2024.json",
-    "2023": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2023.json",
-    "2022": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2022.json",
-    "2021": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2021.json",
-    "2020": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2020.json",
-    "2019": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2019.json",
-    "2018": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2018.json",
-    "2017": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2017.json",
-    "2016": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2016.json",
-    "2015": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2015.json",
-    "2014": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2014.json",
-    "2013": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2013.json",
-    "2012": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2012.json",
-    "2011": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2011.json",
-    "2010": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2010.json",
-    "2009": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2009.json",
-    "2008": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2008.json",
-    "2007": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2007.json",
-    "2006": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2006.json",
-    "2005": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2005.json",
-    "2004": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2004.json",
-    "2003": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2003.json",
-    "2002": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2002.json",
-    "2001": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2001.json",
-    "2000": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2000.json",
-    "1999": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1999.json",
-    "1998": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1998.json",
-    "1997": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1997.json",
-    "1996": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1996.json",
-    "1995": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1995.json",
-    "1994": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1994.json",
-    "1993": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1993.json",
-    "1992": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1992.json",
-    "1991": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1991.json",
-    "1990": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1990.json",
-    "1989": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1989.json",
-    "1988": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1988.json",
-    "1987": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1987.json",
-    "1986": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1986.json",
-    "1985": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1985.json",
-    "1984": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1984.json",
-    "1983": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1983.json"
-  };
+"use strict";
 
-  let allQuestions = [];
-  let loadedYear = null;
-  const selectedQuestions = [];
+const DATA_URLS = {
+  "2025": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2025.json",
+  "2024": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2024.json",
+  "2023": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2023.json",
+  "2022": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2022.json",
+  "2021": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2021.json",
+  "2020": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2020.json",
+  "2019": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2019.json",
+  "2018": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2018.json",
+  "2017": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2017.json",
+  "2016": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2016.json",
+  "2015": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2015.json",
+  "2014": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2014.json",
+  "2013": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2013.json",
+  "2012": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2012.json",
+  "2011": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2011.json",
+  "2010": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2010.json",
+  "2009": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2009.json",
+  "2008": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2008.json",
+  "2007": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2007.json",
+  "2006": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2006.json",
+  "2005": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2005.json",
+  "2004": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2004.json",
+  "2003": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2003.json",
+  "2002": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2002.json",
+  "2001": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2001.json",
+  "2000": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/2000.json",
+  "1999": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1999.json",
+  "1998": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1998.json",
+  "1997": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1997.json",
+  "1996": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1996.json",
+  "1995": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1995.json",
+  "1994": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1994.json",
+  "1993": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1993.json",
+  "1992": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1992.json",
+  "1991": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1991.json",
+  "1990": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1990.json",
+  "1989": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1989.json",
+  "1988": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1988.json",
+  "1987": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1987.json",
+  "1986": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1986.json",
+  "1985": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1985.json",
+  "1984": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1984.json",
+  "1983": "https://raw.githubusercontent.com/Eisatopon/TRAPEZA-THEMATON/refs/heads/main/data/1983.json"
+};
 
-  function toGreekLetter(latin) {
-    const map = { 'A': 'Α', 'B': 'Β', 'C': 'Γ', 'D': 'Δ', 'E': 'Ε' };
-    return map[latin] || latin;
+let allQuestions = [];
+let loadedYear = null;
+const selectedQuestions = [];
+
+function toGreekLetter(latin) {
+  const map = { A: "Α", B: "Β", C: "Γ", D: "Δ", E: "Ε" };
+  return map[latin] || latin;
+}
+
+function typesetMath(el = document.body) {
+  if (!window.mathJaxReady || typeof MathJax === "undefined") { setTimeout(() => typesetMath(el), 200); return; }
+  MathJax.typesetClear([el]);
+  MathJax.typesetPromise([el]).catch(() => {});
+}
+
+async function loadYearIfNeeded(year) {
+  if (loadedYear === year && allQuestions.length > 0) return true;
+  const url = DATA_URLS[year];
+  if (!url) { alert("❌ Δεν υπάρχουν δεδομένα για το έτος " + year); return false; }
+
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    const data = await resp.json();
+
+    allQuestions = data.map((q, i) => ({
+      id: q.id ?? (i + 1),
+      year: String(q.year || year),
+      school: String(q.school || ""),
+      exam: String(q.exam || ""),
+      subject: String(q.subject || "Μαθηματικά"),
+      topic: String(q.topic || ""),
+      content: String(q.content || "")
+    }));
+
+    loadedYear = year;
+    return true;
+  } catch (e) {
+    alert("❌ Πρόβλημα φόρτωσης: " + e.message);
+    return false;
   }
+}
 
-  function typesetMath(el = document.body) {
-    if (!window.mathJaxReady) { setTimeout(() => typesetMath(el), 200); return; }
-    MathJax.typesetClear([el]);
-    MathJax.typesetPromise([el]).catch(() => {});
-  }
+function getFilteredQuestions() {
+  const y = document.getElementById("year").value;
+  const s = document.getElementById("school").value;
+  const sub = document.getElementById("subject").value;
+  const t = document.getElementById("topic").value;
 
-  async function loadYearIfNeeded(year) {
-    if (loadedYear === year && allQuestions.length > 0) return true;
+  return allQuestions.filter(q => {
+    if (y && q.year !== y) return false;
+    if (sub && !q.subject.includes(sub)) return false;
+    if (t && !q.topic.toUpperCase().startsWith(t.toUpperCase())) return false;
 
-    const url = DATA_URLS[year];
-    if (!url) { alert('❌ Δεν υπάρχουν δεδομένα για το έτος ' + year); return false; }
-
-    try {
-      const resp = await fetch(url);
-      if (!resp.ok) throw new Error('HTTP ' + resp.status);
-      const data = await resp.json();
-
-      allQuestions = data.map((q, i) => ({
-        id: q.id ?? i + 1,
-        year: String(q.year || year),
-        school: String(q.school || ""),
-        exam: String(q.exam || ""),
-        subject: String(q.subject || "Μαθηματικά"),
-        topic: String(q.topic || ""),
-        content: String(q.content || "")
-      }));
-
-      loadedYear = year;
-      return true;
-    } catch (e) {
-      alert('❌ Πρόβλημα φόρτωσης: ' + e.message);
-      return false;
+    if (s) {
+      if (s === "gel" && !(q.school === "gel" && q.exam !== "gel_repeat" && q.exam !== "omogeneis")) return false;
+      if (s === "gel_repeat" && q.exam !== "gel_repeat") return false;
+      if (s === "epal" && !(q.school === "epal" && q.exam !== "epal_repeat")) return false;
+      if (s === "epal_repeat" && q.exam !== "epal_repeat") return false;
+      if (s === "omogeneis" && !(q.school === "omogeneis" || q.exam === "omogeneis")) return false;
     }
+    return true;
+  });
+}
+
+function formatContent(raw) {
+  let s = String(raw ?? "");
+  s = s.replace(/\\n/g, "\n").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+
+  const firstLine = (s.split("\n")[0] || "").trim();
+  if (/(ΠΑΝΕΛΛΑΔΙΚ|ΕΠΑΝΑΛΗΠΤΙΚ|ΟΜΟΓΕΝΕΙΣ|ΕΞΕΤΑΣΕΙΣ|\(\s*\d{4}\s*[-–])/i.test(firstLine)) {
+    s = s.substring(s.indexOf("\n") + 1);
   }
 
-  function getFilteredQuestions() {
-    const y = document.getElementById("year").value;
-    const s = document.getElementById("school").value;
-    const sub = document.getElementById("subject").value;
-    const t = document.getElementById("topic").value;
+  s = s.trim()
+    .replace(/\\\\\(/g, "\\(").replace(/\\\\\)/g, "\\)")
+    .replace(/\\\\\[/g, "\\[").replace(/\\\\\]/g, "\\]");
 
-    return allQuestions.filter(q => {
-      if (y && q.year !== y) return false;
-      if (sub && !q.subject.includes(sub)) return false;
-      if (t && !q.topic.toUpperCase().startsWith(t.toUpperCase())) return false;
+  const parts = s.split(/\n{2,}/);
+  return parts.map(p => `<p class="exam-paragraph">${p.replace(/\n/g, "<br>")}</p>`).join("");
+}
 
-      if (s) {
-        if (s === "gel" && !(q.school === "gel" && q.exam !== "gel_repeat" && q.exam !== "omogeneis")) return false;
-        if (s === "gel_repeat" && q.exam !== "gel_repeat") return false;
-        if (s === "epal" && !(q.school === "epal" && q.exam !== "epal_repeat")) return false;
-        if (s === "epal_repeat" && q.exam !== "epal_repeat") return false;
-        if (s === "omogeneis" && !(q.school === "omogeneis" || q.exam === "omogeneis")) return false;
-      }
-      return true;
-    });
+window.searchQuestions = async function () {
+  const year = document.getElementById("year").value;
+  if (!year) { alert("⚠️ Παρακαλώ επιλέξτε έτος"); return; }
+
+  const grid = document.getElementById("questionsGrid");
+  grid.innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><h3>Φόρτωση...</h3></div>';
+
+  const ok = await loadYearIfNeeded(year);
+  if (!ok) return;
+
+  displayQuestions(getFilteredQuestions());
+};
+
+function displayQuestions(questions) {
+  const grid = document.getElementById("questionsGrid");
+  const info = document.getElementById("resultsInfo");
+  const cnt = document.getElementById("resultsCount");
+
+  if (!questions || questions.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><h3>Δεν βρέθηκαν θέματα</h3></div>';
+    info.style.display = "none";
+    return;
   }
 
-  /* ✅ “Πλήρης σύνταξη”: PARAGRAPHS (όχι ένα τεράστιο <br>) */
-  function formatContent(raw) {
-    let s = String(raw ?? "");
-    s = s.replace(/\\n/g, "\n").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  cnt.textContent = String(questions.length);
+  info.style.display = "block";
 
-    // Αφαιρεί ΜΟΝΟ την 1η γραμμή αν μοιάζει με metadata
-    const firstLine = (s.split("\n")[0] || "").trim();
-    if (/(ΠΑΝΕΛΛΑΔΙΚ|ΕΠΑΝΑΛΗΠΤΙΚ|ΟΜΟΓΕΝΕΙΣ|ΕΞΕΤΑΣΕΙΣ|\(\s*\d{4}\s*[-–])/i.test(firstLine)) {
-      s = s.substring(s.indexOf("\n") + 1);
-    }
+  grid.innerHTML = questions.map(q => {
+    let schoolText = q.school.toUpperCase();
+    if (q.school === "omogeneis" || q.exam === "omogeneis") schoolText = "ΟΜΟΓΕΝΕΙΣ";
+    else if (q.school === "gel" && q.exam === "gel_repeat") schoolText = "ΓΕΛ ΕΠΑΝΑΛΗΠΤΙΚΕΣ";
+    else if (q.school === "epal" && q.exam === "epal_repeat") schoolText = "ΕΠΑΛ ΕΠΑΝΑΛΗΠΤΙΚΕΣ";
 
-    s = s.trim();
+    return `
+      <div class="question-card">
+        <div class="card-header">
+          <div class="card-badges">
+            <span class="badge badge-year">${q.year}</span>
+            <span class="badge badge-school">${schoolText}</span>
+            <span class="badge badge-subject">${q.subject}</span>
+          </div>
+          <button class="btn btn-sm btn-outline" onclick="addToExam(${q.id})">✅ Προσθήκη</button>
+        </div>
+        <div class="card-title">Θέμα ${toGreekLetter(q.topic)}</div>
+        <div class="card-content">${formatContent(q.content)}</div>
+      </div>`;
+  }).join("");
 
-    // MathJax escapes
-    s = s
-      .replace(/\\\\\(/g, '\\(').replace(/\\\\\)/g, '\\)')
-      .replace(/\\\\\[/g, '\\[').replace(/\\\\\]/g, '\\]');
+  setTimeout(() => typesetMath(grid), 250);
+  setTimeout(() => typesetMath(grid), 900);
+}
 
-    const parts = s.split(/\n{2,}/);
-    return parts.map(p => `<p class="exam-paragraph">${p.replace(/\n/g, "<br>")}</p>`).join("");
+window.addToExam = function (id) {
+  const q = allQuestions.find(x => x.id === id);
+  if (!q) return;
+  if (selectedQuestions.find(x => x.id === id)) { alert("⚠️ Το θέμα υπάρχει ήδη!"); return; }
+  selectedQuestions.push(q);
+  renderMyExam();
+};
+
+window.removeFromExam = function (id) {
+  const i = selectedQuestions.findIndex(x => x.id === id);
+  if (i > -1) { selectedQuestions.splice(i, 1); renderMyExam(); }
+};
+
+function renderMyExam() {
+  const panel = document.getElementById("myExamPanel");
+  const info = document.getElementById("myExamInfo");
+  const cnt = document.getElementById("myExamCount");
+
+  if (selectedQuestions.length === 0) {
+    panel.innerHTML = '<div class="empty-state"><div class="empty-icon">✏️</div><h3>Δεν έχετε προσθέσει θέματα</h3></div>';
+    info.style.display = "none";
+    return;
   }
 
-  window.searchQuestions = async function() {
-    const year = document.getElementById("year").value;
-    if (!year) { alert("⚠️ Παρακαλώ επιλέξτε έτος"); return; }
+  cnt.textContent = String(selectedQuestions.length);
+  info.style.display = "block";
 
-    const grid = document.getElementById("questionsGrid");
-    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><h3>Φόρτωση...</h3></div>';
+  let html = '<div style="padding:10px;">';
+  selectedQuestions.forEach((q, i) => {
+    let schoolText = q.school.toUpperCase();
+    if (q.school === "omogeneis" || q.exam === "omogeneis") schoolText = "ΟΜΟΓΕΝΕΙΣ";
+    else if (q.exam === "gel_repeat") schoolText = "ΓΕΛ ΕΠΑΝΑΛΗΠΤΙΚΕΣ";
+    else if (q.exam === "epal_repeat") schoolText = "ΕΠΑΛ ΕΠΑΝΑΛΗΠΤΙΚΕΣ";
 
+    html += `
+      <div style="margin:30px 0; padding-bottom:20px; border-bottom:1px solid #dee2e6;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+          <strong style="font-size:1.2em;">${i + 1}. Θέμα ${toGreekLetter(q.topic)}</strong>
+          <span style="color:#666; font-size:0.95em;">(${q.year} – ${schoolText})</span>
+          <button class="btn btn-sm btn-danger" onclick="removeFromExam(${q.id})">❌ Αφαίρεση</button>
+        </div>
+        <div class="card-content">${formatContent(q.content)}</div>
+      </div>`;
+  });
+  html += "</div>";
+  panel.innerHTML = html;
+
+  setTimeout(() => typesetMath(panel), 250);
+  setTimeout(() => typesetMath(panel), 900);
+}
+
+function buildShareUrl() {
+  const base = location.href.split("?")[0];
+  if (!selectedQuestions.length || !loadedYear) return base;
+  const ids = selectedQuestions.map(q => q.id).join(",");
+  return `${base}?questions=${ids}&year=${loadedYear}`;
+}
+
+window.shareByEmail = function () {
+  if (!selectedQuestions.length) { alert("⚠️ Πρώτα προσθέστε θέματα"); return; }
+  const url = buildShareUrl();
+  const subject = encodeURIComponent("Διαγώνισμα από την Τράπεζα Θεμάτων (EisatoponAI)");
+  const body = encodeURIComponent("Σύνδεσμος διαγωνίσματος:\n" + url + "\n\nCreated by EisatoponAI - www.eisatopon.gr");
+  location.href = `mailto:?subject=${subject}&body=${body}`;
+};
+
+window.shareSocial = async function () {
+  if (!selectedQuestions.length) { alert("⚠️ Πρώτα προσθέστε θέματα"); return; }
+  const url = buildShareUrl();
+
+  if (navigator.share) {
+    try { await navigator.share({ title: "Διαγώνισμα (EisatoponAI)", text: "Σύνδεσμος διαγωνίσματος:", url }); return; } catch {}
+  }
+  try { await navigator.clipboard.writeText(url); alert("✅ Ο σύνδεσμος αντιγράφηκε στο clipboard!"); }
+  catch { prompt("Αντιγράψτε τον σύνδεσμο:", url); }
+};
+
+window.generateQRCode = function () {
+  if (!selectedQuestions.length) { alert("⚠️ Πρώτα προσθέστε θέματα"); return; }
+  const url = buildShareUrl();
+
+  document.getElementById("qrcode").innerHTML = "";
+  new QRCode(document.getElementById("qrcode"), { text: url, width: 220, height: 220 });
+
+  document.getElementById("shareUrl").textContent = url;
+  document.getElementById("qrPanel").style.display = "block";
+  document.getElementById("qrPanel").scrollIntoView({ behavior: "smooth" });
+};
+
+window.clearMyExam = function () {
+  if (!confirm("Θέλετε να διαγράψετε όλα τα θέματα;")) return;
+  selectedQuestions.length = 0;
+  renderMyExam();
+  document.getElementById("qrPanel").style.display = "none";
+};
+
+window.resetFilters = function () {
+  document.getElementById("year").value = "";
+  document.getElementById("school").value = "";
+  document.getElementById("subject").value = "";
+  document.getElementById("topic").value = "";
+  document.getElementById("questionsGrid").innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><h3>Επιλέξτε φίλτρα</h3></div>';
+  document.getElementById("resultsInfo").style.display = "none";
+};
+
+function buildExamHeaderHTML() {
+  const yearTxt = (loadedYear || "").trim();
+  const schoolSel = document.getElementById("school");
+  const schoolTxt = (schoolSel && schoolSel.value) ? schoolSel.options[schoolSel.selectedIndex].text : "";
+  const subjectSel = document.getElementById("subject");
+  const subjectTxt = (subjectSel && subjectSel.value) ? subjectSel.value : "Μαθηματικά";
+  const dateTxt = new Date().toLocaleDateString("el-GR", { year: "numeric", month: "2-digit", day: "2-digit" });
+
+  return `
+    <div style="width:100%; background:#fff; color:#111; font-family:Segoe UI, Tahoma, Verdana, sans-serif;">
+      <div style="text-align:center; font-weight:800; font-size:15px; letter-spacing:0.4px;">ΕΛΛΗΝΙΚΗ ΔΗΜΟΚΡΑΤΙΑ</div>
+      <div style="text-align:center; font-weight:800; font-size:14px; margin-top:2px;">ΠΑΝΕΛΛΑΔΙΚΕΣ ΕΞΕΤΑΣΕΙΣ</div>
+      <div style="margin-top:8px; border-top:2px solid #000; border-bottom:2px solid #000; padding:10px 0;">
+        <div style="display:flex; justify-content:space-between; gap:14px; font-size:12px;">
+          <div style="min-width:52%; line-height:1.45;">
+            <div><strong>Μάθημα:</strong> ${subjectTxt}</div>
+            <div><strong>Ημερομηνία:</strong> ${dateTxt}</div>
+            <div><strong>Ονοματεπώνυμο:</strong> ............................................................</div>
+            <div style="margin-top:6px;"><strong>Σχολείο:</strong> ............................................................</div>
+          </div>
+          <div style="min-width:48%; text-align:right; line-height:1.45;">
+            ${yearTxt ? `<div><strong>Έτος:</strong> ${yearTxt}</div>` : ``}
+            ${schoolTxt ? `<div><strong>Τύπος:</strong> ${schoolTxt}</div>` : ``}
+            <div><strong>Θέματα:</strong> ${selectedQuestions.length}</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:8px; font-size:11px; line-height:1.5;">
+        <div><strong>Οδηγίες:</strong></div>
+        <div>• Να απαντήσετε σε όλα τα θέματα.</div>
+        <div>• Να αιτιολογείτε πλήρως τις απαντήσεις σας όπου απαιτείται.</div>
+      </div>
+      <div style="margin-top:10px; border-bottom:1px solid #000;"></div>
+    </div>
+  `;
+}
+
+function buildExamBodyHTML() {
+  let html = "";
+  selectedQuestions.forEach((q, i) => {
+    let schoolText = q.school.toUpperCase();
+    if (q.school === "omogeneis" || q.exam === "omogeneis") schoolText = "ΟΜΟΓΕΝΕΙΣ";
+    else if (q.exam === "gel_repeat") schoolText = "ΓΕΛ ΕΠΑΝΑΛΗΠΤΙΚΕΣ";
+    else if (q.exam === "epal_repeat") schoolText = "ΕΠΑΛ ΕΠΑΝΑΛΗΠΤΙΚΕΣ";
+
+    html += `
+      <div style="margin-top:18px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap;">
+          <div style="font-size:14px; font-weight:800;">${i + 1}. Θέμα ${toGreekLetter(q.topic)}</div>
+          <div style="font-size:12px; color:#444;">(${q.year} – ${schoolText})</div>
+        </div>
+        <div style="margin-top:6px; font-size:12.5px; line-height:1.75;">${formatContent(q.content)}</div>
+        <div style="margin-top:14px; border-bottom:1px solid #ddd;"></div>
+      </div>
+    `;
+  });
+  return html;
+}
+
+window.printMyExam = function () {
+  if (!selectedQuestions.length) { alert("⚠️ Δεν έχετε επιλέξει θέματα"); return; }
+
+  const w = window.open("", "_blank");
+  if (!w) { alert("❌ Επιτρέψτε τα popups για PDF export."); return; }
+
+  const headerHTML = buildExamHeaderHTML();
+  const bodyHTML = buildExamBodyHTML();
+
+  w.document.open();
+  w.document.write(`
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Διαγώνισμα - EisatoponAI</title>
+  <script>
+    MathJax = { tex: { inlineMath: [['\\\\(', '\\\\)'], ['$', '$']], displayMath: [['\\\\[', '\\\\]'], ['$$', '$$']], processEscapes: true } };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    html, body { background:#fff; color:#111; margin:0; padding:0; }
+    body { font-family: Segoe UI, Tahoma, Verdana, sans-serif; padding: 14mm; }
+    .exam-paragraph { margin: 10px 0; line-height: 1.75; }
+    .created-by { position: fixed; left: 0; right: 0; bottom: 8mm; text-align: center; font-size: 11px; color: #555; }
+    @page { margin: 14mm; }
+  </style>
+</head>
+<body>
+  ${headerHTML}
+  <div style="margin-top:10px;">${bodyHTML}</div>
+  <div class="created-by">Created by EisatoponAI - www.eisatopon.gr</div>
+  <script>
+    (function waitAndPrint(){
+      if (typeof MathJax === 'undefined' || !MathJax.startup || !MathJax.startup.promise) { setTimeout(waitAndPrint, 300); return; }
+      MathJax.startup.promise.then(() => MathJax.typesetPromise()).then(() => setTimeout(() => window.print(), 400)).catch(() => setTimeout(() => window.print(), 700));
+    })();
+  </script>
+</body>
+</html>`);
+  w.document.close();
+};
+
+(async function loadFromUrl() {
+  const params = new URLSearchParams(location.search);
+  const ids = params.get("questions");
+  const year = params.get("year");
+
+  if (ids && year) {
     const ok = await loadYearIfNeeded(year);
     if (!ok) return;
 
-    displayQuestions(getFilteredQuestions());
-  };
-
-  function displayQuestions(questions) {
-    const grid = document.getElementById("questionsGrid");
-    const info = document.getElementById("resultsInfo");
-    const cnt = document.getElementById("resultsCount");
-
-    if (!questions || questions.length === 0) {
-      grid.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><h3>Δεν βρέθηκαν θέματα</h3></div>';
-      info.style.display = "none";
-      return;
-    }
-
-    cnt.textContent = questions.length;
-    info.style.display = "block";
-
-    grid.innerHTML = questions.map(q => {
-      let schoolText = q.school.toUpperCase();
-      if (q.school === "omogeneis" || q.exam === "omogeneis") schoolText = "ΟΜΟΓΕΝΕΙΣ";
-      else if (q.school === "gel" && q.exam === "gel_repeat") schoolText = "ΓΕΛ ΕΠΑΝΑΛΗΠΤΙΚΕΣ";
-      else if (q.school === "epal" && q.exam === "epal_repeat") schoolText = "ΕΠΑΛ ΕΠΑΝΑΛΗΠΤΙΚΕΣ";
-
-      return `
-        <div class="question-card">
-          <div class="card-header">
-            <div class="card-badges">
-              <span class="badge badge-year">${q.year}</span>
-              <span class="badge badge-school">${schoolText}</span>
-              <span class="badge badge-subject">${q.subject}</span>
-            </div>
-            <button class="btn btn-sm btn-outline" onclick="addToExam(${q.id})">✅ Προσθήκη</button>
-          </div>
-          <div class="card-title">Θέμα ${toGreekLetter(q.topic)}</div>
-          <div class="card-content">${formatContent(q.content)}</div>
-        </div>`;
-    }).join("");
-
-    setTimeout(() => typesetMath(grid), 250);
-    setTimeout(() => typesetMath(grid), 900);
-  }
-
-  window.addToExam = function(id) {
-    const q = allQuestions.find(x => x.id === id);
-    if (!q) return;
-    if (selectedQuestions.find(x => x.id === id)) { alert("⚠️ Το θέμα υπάρχει ήδη!"); return; }
-    selectedQuestions.push(q);
-    renderMyExam();
-  };
-
-  window.removeFromExam = function(id) {
-    const i = selectedQuestions.findIndex(x => x.id === id);
-    if (i > -1) { selectedQuestions.splice(i, 1); renderMyExam(); }
-  };
-
-  function renderMyExam() {
-    const panel = document.getElementById("myExamPanel");
-    const info = document.getElementById("myExamInfo");
-    const cnt = document.getElementById("myExamCount");
-
-    if (selectedQuestions.length === 0) {
-      panel.innerHTML = '<div class="empty-state"><div class="empty-icon">✏️</div><h3>Δεν έχετε προσθέσει θέματα</h3></div>';
-      info.style.display = "none";
-      return;
-    }
-
-    cnt.textContent = selectedQuestions.length;
-    info.style.display = "block";
-
-    let html = '<div style="padding:10px;">';
-    selectedQuestions.forEach((q, i) => {
-      let schoolText = q.school.toUpperCase();
-      if (q.school === "omogeneis" || q.exam === "omogeneis") schoolText = "ΟΜΟΓΕΝΕΙΣ";
-      else if (q.exam === "gel_repeat") schoolText = "ΓΕΛ ΕΠΑΝΑΛΗΠΤΙΚΕΣ";
-      else if (q.exam === "epal_repeat") schoolText = "ΕΠΑΛ ΕΠΑΝΑΛΗΠΤΙΚΕΣ";
-
-      html += `
-        <div style="margin:30px 0; padding-bottom:20px; border-bottom:1px solid #dee2e6;">
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
-            <strong style="font-size:1.2em;">${i + 1}. Θέμα ${toGreekLetter(q.topic)}</strong>
-            <span style="color:#666; font-size:0.95em;">(${q.year} – ${schoolText})</span>
-            <button class="btn btn-sm btn-danger" onclick="removeFromExam(${q.id})">❌ Αφαίρεση</button>
-          </div>
-          <div class="card-content">${formatContent(q.content)}</div>
-        </div>`;
-    });
-    html += '</div>';
-    panel.innerHTML = html;
-
-    setTimeout(() => typesetMath(panel), 250);
-    setTimeout(() => typesetMath(panel), 900);
-  }
-
-  // ===== Share helpers =====
-  function buildShareUrl() {
-    if (!selectedQuestions.length || !loadedYear) return location.href.split("?")[0];
-    const ids = selectedQuestions.map(q => q.id).join(",");
-    return location.href.split("?")[0] + `?questions=${ids}&year=${loadedYear}`;
-  }
-
-  window.shareByEmail = function() {
-    if (!selectedQuestions.length) { alert("⚠️ Πρώτα προσθέστε θέματα"); return; }
-    const url = buildShareUrl();
-    const subject = encodeURIComponent("Διαγώνισμα από την Τράπεζα Θεμάτων (EisatoponAI)");
-    const body = encodeURIComponent("Σύνδεσμος διαγωνίσματος:\n" + url + "\n\nCreated by EisatoponAI - www.eisatopon.gr");
-    location.href = `mailto:?subject=${subject}&body=${body}`;
-  };
-
-  window.shareSocial = async function() {
-    if (!selectedQuestions.length) { alert("⚠️ Πρώτα προσθέστε θέματα"); return; }
-    const url = buildShareUrl();
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "Διαγώνισμα (EisatoponAI)", text: "Σύνδεσμος διαγωνίσματος:", url });
-        return;
-      } catch (e) {}
-    }
-    try {
-      await navigator.clipboard.writeText(url);
-      alert("✅ Ο σύνδεσμος αντιγράφηκε στο clipboard!");
-    } catch (e) {
-      prompt("Αντιγράψτε τον σύνδεσμο:", url);
-    }
-  };
-
-  // ===== QR =====
-  window.generateQRCode = function() {
-    if (!selectedQuestions.length) { alert("⚠️ Πρώτα προσθέστε θέματα"); return; }
-    const url = buildShareUrl();
-
-    document.getElementById("qrcode").innerHTML = "";
-    new QRCode(document.getElementById("qrcode"), {
-      text: url,
-      width: 220,
-      height: 220,
-      colorDark: "#0d47a1",
-      colorLight: "#ffffff"
+    ids.split(",").forEach(idStr => {
+      const id = parseInt(idStr, 10);
+      const q = allQuestions.find(x => x.id === id);
+      if (q && !selectedQuestions.find(x => x.id === id)) selectedQuestions.push(q);
     });
 
-    document.getElementById("shareUrl").textContent = url;
-    document.getElementById("qrPanel").style.display = "block";
-    document.getElementById("qrPanel").scrollIntoView({ behavior: "smooth" });
-  };
-
-  // ===== Clear =====
-  window.clearMyExam = () => {
-    if (!confirm("Θέλετε να διαγράψετε όλα τα θέματα;")) return;
-    selectedQuestions.length = 0;
-    renderMyExam();
-    document.getElementById("qrPanel").style.display = "none";
-  };
-
-  // ===== Reset =====
-  window.resetFilters = function() {
-    document.getElementById("year").value = "";
-    document.getElementById("school").value = "";
-    document.getElementById("subject").value = "";
-    document.getElementById("topic").value = "";
-    document.getElementById("questionsGrid").innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><h3>Επιλέξτε φίλτρα</h3></div>';
-    document.getElementById("resultsInfo").style.display = "none";
-  };
-
-  // ===== PDF/Print (NΕΟ): ανοίγει νέο tab, περιμένει MathJax, μετά print (όχι άδειο PDF) =====
-  function buildExamHeaderHTML() {
-    const yearTxt = (loadedYear || "").trim();
-    const schoolSel = document.getElementById("school");
-    const schoolTxt = schoolSel && schoolSel.value ? schoolSel.options[schoolSel.selectedIndex].text : "";
-    const subjectSel = document.getElementById("subject");
-    const subjectTxt = subjectSel && subjectSel.value ? subjectSel.value : "Μαθηματικά";
-    const now = new Date();
-    const dateTxt = now.toLocaleDateString("el-GR", { year: "numeric", month: "2-digit", day: "2-digit" });
-
-    return `
-      <div style="width:100%; background:#fff; color:#111; font-family:Segoe UI, Tahoma, Verdana, sans-serif;">
-        <div style="text-align:center; font-weight:800; font-size:15px; letter-spacing:0.4px;">ΕΛΛΗΝΙΚΗ ΔΗΜΟΚΡΑΤΙΑ</div>
-        <div style="text-align:center; font-weight:800; font-size:14px; margin-top:2px;">ΠΑΝΕΛΛΑΔΙΚΕΣ ΕΞΕΤΑΣΕΙΣ</div>
-
-        <div style="margin-top:8px; border-top:2px solid #000; border-bottom:2px solid #000; padding:10px 0;">
-          <div style="display:flex; justify-content:space-between; gap:14px; font-size:12px;">
-            <div style="min-width:52%; line-height:1.45;">
-              <div><strong>Μάθημα:</strong> ${subjectTxt}</div>
-              <div><strong>Ημερομηνία:</strong> ${dateTxt}</div>
-              <div><strong>Ονοματεπώνυμο:</strong> ............................................................</div>
-              <div style="margin-top:6px;"><strong>Σχολείο:</strong> ............................................................</div>
-            </div>
-            <div style="min-width:48%; text-align:right; line-height:1.45;">
-              ${yearTxt ? `<div><strong>Έτος:</strong> ${yearTxt}</div>` : ``}
-              ${schoolTxt ? `<div><strong>Τύπος:</strong> ${schoolTxt}</div>` : ``}
-              <div><strong>Θέματα:</strong> ${selectedQuestions.length}</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="margin-top:8px; font-size:11px; line-height:1.5;">
-          <div><strong>Οδηγίες:</strong></div>
-          <div>• Να απαντήσετε σε όλα τα θέματα.</div>
-          <div>• Να αιτιολογείτε πλήρως τις απαντήσεις σας όπου απαιτείται.</div>
-        </div>
-
-        <div style="margin-top:10px; border-bottom:1px solid #000;"></div>
-      </div>
-    `;
-  }
-
-  function buildExamBodyHTML() {
-    let html = '';
-    selectedQuestions.forEach((q, i) => {
-      let schoolText = q.school.toUpperCase();
-      if (q.school === "omogeneis" || q.exam === "omogeneis") schoolText = "ΟΜΟΓΕΝΕΙΣ";
-      else if (q.exam === "gel_repeat") schoolText = "ΓΕΛ ΕΠΑΝΑΛΗΠΤΙΚΕΣ";
-      else if (q.exam === "epal_repeat") schoolText = "ΕΠΑΛ ΕΠΑΝΑΛΗΠΤΙΚΕΣ";
-
-      html += `
-        <div style="margin-top:18px;">
-          <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap;">
-            <div style="font-size:14px; font-weight:800;">${i+1}. Θέμα ${toGreekLetter(q.topic)}</div>
-            <div style="font-size:12px; color:#444;">(${q.year} – ${schoolText})</div>
-          </div>
-          <div style="margin-top:6px; font-size:12.5px; line-height:1.75;">
-            ${formatContent(q.content)}
-          </div>
-          <div style="margin-top:14px; border-bottom:1px solid #ddd;"></div>
-        </div>
-      `;
-    });
-    return html;
-  }
-
-  window.printMyExam = function() {
-    if (!selectedQuestions.length) { alert("⚠️ Δεν έχετε επιλέξει θέματα"); return; }
-
-    const w = window.open('', '_blank');
-    if (!w) { alert("❌ Επιτρέψτε τα popups για PDF export."); return; }
-
-    const headerHTML = buildExamHeaderHTML();
-    const bodyHTML = buildExamBodyHTML();
-
-    w.document.open();
-    w.document.write(`
-      <!doctype html>
-      <html lang="el">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Διαγώνισμα - EisatoponAI</title>
-
-        <script>
-          MathJax = {
-            tex: {
-              inlineMath: [['\\\\(', '\\\\)'], ['$', '$']],
-              displayMath: [['\\\\[', '\\\\]'], ['$$', '$$']],
-              processEscapes: true
-            }
-          };
-        </script>
-        <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
-        <style>
-          html, body { background:#fff; color:#111; margin:0; padding:0; }
-          body { font-family: Segoe UI, Tahoma, Verdana, sans-serif; padding: 14mm; }
-          .exam-paragraph { margin: 10px 0; line-height: 1.75; }
-          .created-by { position: fixed; left: 0; right: 0; bottom: 8mm; text-align: center; font-size: 11px; color: #555; }
-          @page { margin: 14mm; }
-        </style>
-      </head>
-      <body>
-        ${headerHTML}
-        <div style="margin-top:10px;">${bodyHTML}</div>
-        <div class="created-by">Created by EisatoponAI - www.eisatopon.gr</div>
-
-        <script>
-          (function waitAndPrint() {
-            if (typeof MathJax === 'undefined' || !MathJax.startup || !MathJax.startup.promise) {
-              setTimeout(waitAndPrint, 300);
-              return;
-            }
-            MathJax.startup.promise
-              .then(() => MathJax.typesetPromise())
-              .then(() => setTimeout(() => window.print(), 400))
-              .catch(() => setTimeout(() => window.print(), 700));
-          })();
-        </script>
-      </body>
-      </html>
-    `);
-    w.document.close();
-  };
-
-  // ===== Load from URL =====
-  (async function loadFromUrl() {
-    const params = new URLSearchParams(location.search);
-    const ids = params.get("questions");
-    const year = params.get("year");
-
-    if (ids && year) {
-      const ok = await loadYearIfNeeded(year);
-      if (!ok) return;
-
-      ids.split(",").forEach(idStr => {
-        const id = parseInt(idStr, 10);
-        const q = allQuestions.find(x => x.id === id);
-        if (q && !selectedQuestions.find(x => x.id === id)) selectedQuestions.push(q);
-      });
-
-      if (selectedQuestions.length > 0) {
-        renderMyExam();
-        document.getElementById("myExamPanel").scrollIntoView({ behavior: "smooth" });
-      }
+    if (selectedQuestions.length > 0) {
+      renderMyExam();
+      document.getElementById("myExamPanel").scrollIntoView({ behavior: "smooth" });
     }
-  })();
+  }
+})();
 </script>
 
 </body>
